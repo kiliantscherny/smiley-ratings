@@ -1,0 +1,4 @@
+name: smiley_data
+type: duckdb
+options:
+  filename: smiley_data.duckdb
