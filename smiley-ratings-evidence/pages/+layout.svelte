@@ -6,6 +6,13 @@
 	export let data;
 </script>
 
-<EvidenceDefaultLayout {data} logo="/smileys-logo.png" hideSidebar=true hideBreadcrumbs=true hideTOC=true neverShowQueries=true>
-	<slot slot="content" />
+<EvidenceDefaultLayout
+  {data}
+  logo="{base}/smileys-logo.png"
+  hideSidebar={true}
+  hideBreadcrumbs={true}
+  hideTOC={true}
+  neverShowQueries={true}
+>
+  <slot slot="content" />
 </EvidenceDefaultLayout>
