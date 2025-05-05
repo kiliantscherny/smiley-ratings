@@ -15,11 +15,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          working-directory: smiley-ratings-evidence
 
       - name: Install dependencies
-        run: npm install
-        working-directory: smiley-ratings-evidence
+        run: |
+          cd smiley-ratings-evidence
+          npm install
 
       - name: build
         env:
@@ -28,15 +28,14 @@ jobs:
           ## EVIDENCE_SOURCE__my_source__username: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__USERNAME }}
           ## EVIDENCE_SOURCE__my_source__private_key: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__PRIVATE_KEY }}
         run: |
+          cd smiley-ratings-evidence
           npm run sources
           npm run build
-        working-directory: smiley-ratings-evidence
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'build/${{ github.event.repository.name }}/smiley-ratings-evidence'
-          working-directory: smiley-ratings-evidence
 
   deploy:
     needs: build
