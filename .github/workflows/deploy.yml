@@ -4,6 +4,10 @@ on:
   push:
     branches: 'main' # or whichever branch you want to deploy from
 
+defaults:
+  run:
+    working-directory: ./smiley-ratings-evidence
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,9 +21,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: |
-          cd smiley-ratings-evidence
-          npm install
+        run: npm install
 
       - name: build
         env:
@@ -28,7 +30,6 @@ jobs:
           ## EVIDENCE_SOURCE__my_source__username: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__USERNAME }}
           ## EVIDENCE_SOURCE__my_source__private_key: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__PRIVATE_KEY }}
         run: |
-          cd smiley-ratings-evidence
           npm run sources
           npm run build
 
