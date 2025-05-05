@@ -34,7 +34,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'smiley-ratings-evidence/build/${{ github.event.repository.name }}/smiley-ratings-evidence'
+          path: 'build/${{ github.event.repository.name }}/smiley-ratings-evidence'
 
   deploy:
     needs: build
