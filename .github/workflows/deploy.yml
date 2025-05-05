@@ -26,8 +26,9 @@ jobs:
           ## EVIDENCE_SOURCE__my_source__username: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__USERNAME }}
           ## EVIDENCE_SOURCE__my_source__private_key: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__PRIVATE_KEY }}
         run: |
+          export NODE_OPTIONS="--max_old_space_size=4096"
           npm run sources
-          NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          npm run build
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
