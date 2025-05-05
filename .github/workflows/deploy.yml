@@ -7,34 +7,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: ./smiley-ratings-evidence/package-lock.json
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./smiley-ratings-evidence
 
       - name: build
         env:
-          BASE_PATH: '/${{ github.event.repository.name }}/smiley-ratings-evidence'
+          BASE_PATH: '/${{ github.event.repository.name }}'
+          ## Add and uncomment any environment variables here
+          ## EVIDENCE_SOURCE__my_source__username: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__USERNAME }}
+          ## EVIDENCE_SOURCE__my_source__private_key: ${{ secrets.EVIDENCE_SOURCE__MY_SOURCE__PRIVATE_KEY }}
         run: |
           npm run sources
           npm run build
-        working-directory: ./smiley-ratings-evidence
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: smiley-ratings-evidence/build
+          path: 'build/${{ github.event.repository.name }}'
 
   deploy:
     needs: build

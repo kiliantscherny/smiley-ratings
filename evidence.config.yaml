@@ -3,7 +3,7 @@ appearance:
   switcher: true
 
 deployment:
-  basePath: /smiley-ratings-evidence
+  basePath: /smiley-ratings
 
 # Forest theme
 theme:
