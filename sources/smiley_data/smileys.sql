@@ -8,7 +8,13 @@ select
     CAST(navn1 AS STRING) AS navn1,
     CAST(adresse1 AS STRING) AS adresse1,
     CAST(postnr AS STRING) AS postnr,
-    CAST(By AS STRING) AS by,
+    CASE
+        WHEN postnr BETWEEN 1000 AND 1499 THEN '1000-1499'
+        WHEN postnr BETWEEN 1500 AND 1799 THEN '1500-1799'
+        WHEN postnr BETWEEN 1800 AND 1999 THEN '1800-1999'
+        ELSE CAST(postnr AS STRING)
+    END AS postnr_group, -- in order to work with the postal_code in the geojson file
+    CAST(By AS STRING) AS by_city,
     CAST(seneste_kontrol AS INTEGER) AS seneste_kontrol,
     CAST(seneste_kontrol_dato AS DATE) AS seneste_kontrol_dato,
     CAST(naestseneste_kontrol AS INTEGER) AS naestseneste_kontrol,
