@@ -1,8 +1,8 @@
 {
-  "name": "my-evidence-project",
+  "name": "smiley-ratings",
   "version": "0.0.1",
   "scripts": {
-    "build": "evidence build",
+    "build": "EVIDENCE_BUILD_DIR=./build/smiley-ratings evidence build",
     "build:strict": "evidence build:strict",
     "dev": "evidence dev --open /",
     "test": "evidence build",
