@@ -49,7 +49,7 @@ title: Post codes
 <AreaMap 
     data={n_inspections_per_postnr_group} 
     areaCol=postnr_group
-    geoJsonUrl='/postal_codes_dk_full_deduped.geojson'
+    geoJsonUrl='/postal_codes_dk_full_deduped_simplified_10pct.geojson'
     geoId=postal_code
     value=n_records
     height=800
