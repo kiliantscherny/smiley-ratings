@@ -2,8 +2,8 @@ appearance:
   default: light
   switcher: true
 
-features:
-  browserSQL: false
+# features:
+#   browserSQL: false
 
 # Forest theme
 theme:

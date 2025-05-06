@@ -2,13 +2,13 @@
   "name": "smiley-ratings",
   "version": "0.0.1",
   "scripts": {
-    "build": "VITE_EVIDENCE_SPA=true evidence build",
-    "preview": "VITE_EVIDENCE_SPA=true evidence preview",
+    "build": "EVIDENCE_BUILD_DIR=./build/smiley-ratings evidence build",
     "build:strict": "evidence build:strict",
     "dev": "evidence dev --open /",
     "test": "evidence build",
     "sources": "evidence sources",
-    "sources:strict": "evidence sources --strict"
+    "sources:strict": "evidence sources --strict",
+    "preview": "evidence preview"
   },
   "engines": {
     "npm": ">=7.0.0",
