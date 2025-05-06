@@ -1,5 +1,5 @@
 ---
-title: Geographic data
+title: Locations
 ---
 
 # Locations of every establishment
@@ -64,31 +64,4 @@ tooltip={[
 {id: 'URL', showColumnName: false, contentType: 'link', linkLabel: 'Click to see Smiley Report 📋', valueClass: 'font-bold mt-1'}
 ]}
 height=800
-/>
-
-<!-- <DataTable data={map_locations}/> -->
-
-# Number of inspections per post code
-
-```sql n_inspections_per_postnr_group
-  SELECT
-    postnr_group,
-    COUNT(*) AS n_records
-  FROM
-    smileys
-  WHERE emoji_score IN ${inputs.emoji_score_selection.value}
-  and by_city IN ${inputs.by_city_selection.value}
-  -- WHERE
-  --   postnr IN ('2800', '7400', '2860', '2300')
-  GROUP BY 1
-  ORDER BY 2 DESC
-```
-
-<AreaMap 
-    data={n_inspections_per_postnr_group} 
-    areaCol=postnr_group
-    geoJsonUrl='postal_codes_dk_full_dissolved.geojson'
-    geoId=postal_code
-    value=n_records
-    height=800
 />
