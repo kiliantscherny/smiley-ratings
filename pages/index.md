@@ -104,26 +104,7 @@ There are **<Value data={smileys_with_rating} column=n_businesses fmt="num0"/>**
       xAxisTitle="Rating"
       yAxisTitle="Number of establishments"
     />
-    <!-- <ECharts config={
-        {
-            tooltip: {
-                formatter: '{b}: {c} ({d}%)'
-            },
-          series: [
-            {
-              type: 'pie',
-              radius: ['40%', '70%'],
-              data: [...donut_data],
-            }
-          ]
-          }
-        }
-    /> -->
 </Grid>
-
-```sql list_smileys_with_rating
-  select * from smileys where seneste_kontrol is not null limit 10
-```
 
 # Winners and Losers since the previous Smiley rating
 
@@ -200,4 +181,92 @@ Which businesses have got better since their last check and which have got worse
     markers=true
     markerShape=emptyCircle
     markerSize=5
+/>
+
+# Locations of every establishment
+
+## Filters
+
+```sql emoji_score_dropdown
+  select distinct emoji_score from smileys
+```
+
+<Dropdown
+  name=emoji_score_selection
+  data={emoji_score_dropdown}
+  value=emoji_score
+  multiple=true
+  selectAllByDefault=true
+  >
+  <!-- <DropdownOption value="%" valueLabel="All Ratings"/> -->
+</Dropdown>
+
+```sql by_city_dropdown
+  select distinct by_city from smileys
+```
+
+<Dropdown
+  name=by_city_selection
+  data={by_city_dropdown}
+  value=by_city
+  multiple=true
+  selectAllByDefault=true
+  >
+</Dropdown>
+
+```sql map_locations
+  select *
+  from smileys
+  where
+    seneste_kontrol is not null
+    and geo_longitude is not null
+    and geo_longitude != 0
+    and geo_latitude is not null
+    and geo_latitude != 0
+    and emoji_score IN ${inputs.emoji_score_selection.value}
+    and by_city IN ${inputs.by_city_selection.value}
+```
+
+<PointMap
+data={map_locations}
+lat=geo_latitude
+long=geo_longitude  
+pointName=navn1
+value=emoji_score
+colorPalette={['#40eb34', '#ebe234', '#eb9334', '#eb4034']}
+showTooltip=true
+tooltipType=click
+tooltip={[
+{id: 'navn1', showColumnName: false, valueClass: 'text-xl font-semibold'},
+{id: 'adresse1', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
+{id: 'postnr', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
+{id: 'by_city', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
+{id: 'emoji_score', title: 'Latest rating', fmt: 'id', showColumnName: true, valueClass: 'text-l font-semibold'},
+{id: 'URL', showColumnName: false, contentType: 'link', linkLabel: 'Click to see Smiley Report 📋', valueClass: 'font-bold mt-1'}
+]}
+height=800
+/>
+
+# Number of inspections per post code
+
+```sql n_inspections_per_postnr_group
+  SELECT
+    postnr_group,
+    by_city,
+    COUNT(*) AS n_records
+  FROM
+    smileys
+  WHERE emoji_score IN ${inputs.emoji_score_selection.value}
+  and by_city IN ${inputs.by_city_selection.value}
+  GROUP BY 1, 2
+  ORDER BY 3 DESC
+```
+
+<AreaMap 
+    data={n_inspections_per_postnr_group} 
+    areaCol=postnr_group
+    geoJsonUrl='/postal_codes_dk_full_deduped_simplified_10pct.geojson'
+    geoId=postal_code
+    value=n_records
+    height=800
 />
