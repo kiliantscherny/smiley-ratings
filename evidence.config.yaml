@@ -2,6 +2,9 @@ appearance:
   default: light
   switcher: true
 
+deployment:
+  basePath: /smiley-ratings
+
 # Forest theme
 theme:
   colorPalettes:
