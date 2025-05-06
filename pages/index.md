@@ -122,6 +122,7 @@ Which businesses have got better since their last check and which have got worse
     score_delta > 0
   order by
     score_delta DESC
+  limit 10
 ```
 
 ```sql winners
@@ -136,17 +137,18 @@ Which businesses have got better since their last check and which have got worse
     score_delta < 0
   order by
     score_delta ASC
+  limit 10
 ```
 
 <Grid cols=2>
-<DataTable data={winners} title="👍 Biggest winners since previous Smiley check">
+<DataTable data={winners} title="👍 Top 10 winners since previous Smiley check">
 	<Column id=name />
 	<Column id=emoji_score />
 	<Column id=previous_emoji_score />
   <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true/>
 </DataTable>
 
-<DataTable data={losers} title="👎 Biggest losers since previous Smiley check">
+<DataTable data={losers} title="👎 Top 10 losers since previous Smiley check">
 	<Column id=name />
 	<Column id=emoji_score />
 	<Column id=previous_emoji_score />
@@ -227,7 +229,7 @@ Which businesses have got better since their last check and which have got worse
   from smileys
   where
     seneste_kontrol is not null
-    and postnr BETWEEN 1000 AND 3699
+    -- and postnr BETWEEN 1000 AND 3699
     and geo_longitude is not null
     and geo_longitude != 0
     and geo_latitude is not null
