@@ -36,8 +36,5 @@
     "trim@<0.0.3": ">0.0.3",
     "sqlite3": "5.1.5",
     "axios": "^1.7.4"
-  },
-  "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.8"
   }
 }

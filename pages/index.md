@@ -246,27 +246,3 @@ tooltip={[
 ]}
 height=800
 />
-
-# Number of inspections per post code
-
-```sql n_inspections_per_postnr_group
-  SELECT
-    postnr_group,
-    by_city,
-    COUNT(*) AS n_records
-  FROM
-    smileys
-  WHERE emoji_score IN ${inputs.emoji_score_selection.value}
-  and by_city IN ${inputs.by_city_selection.value}
-  GROUP BY 1, 2
-  ORDER BY 3 DESC
-```
-
-<AreaMap 
-    data={n_inspections_per_postnr_group} 
-    areaCol=postnr_group
-    geoJsonUrl='/postal_codes_dk_full_deduped_simplified_10pct.geojson'
-    geoId=postal_code
-    value=n_records
-    height=800
-/>

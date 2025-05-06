@@ -2,8 +2,8 @@ appearance:
   default: light
   switcher: true
 
-# features:
-#   browserSQL: false
+deployment:
+  basePath: /smiley-ratings
 
 # Forest theme
 theme:
