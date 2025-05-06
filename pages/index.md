@@ -215,10 +215,19 @@ Which businesses have got better since their last check and which have got worse
 </Dropdown>
 
 ```sql map_locations
-  select *
+  select
+    navn1,
+    emoji_score,
+    geo_latitude,
+    geo_longitude,
+    adresse1,
+    postnr,
+    by_city,
+    URL
   from smileys
   where
     seneste_kontrol is not null
+    and postnr BETWEEN 1000 AND 3699
     and geo_longitude is not null
     and geo_longitude != 0
     and geo_latitude is not null
