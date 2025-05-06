@@ -2,6 +2,9 @@ appearance:
   default: light
   switcher: true
 
+features:
+  browserSQL: false
+
 # Forest theme
 theme:
   colorPalettes:
