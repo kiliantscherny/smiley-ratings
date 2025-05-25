@@ -40,6 +40,13 @@ select
         WHEN naestseneste_kontrol = 3 THEN '3: ☹️'
         WHEN naestseneste_kontrol = 4 THEN '4: 😡'
     END AS previous_emoji_score,
+    CAST(seneste_kontrol AS INTEGER) - CAST(naestseneste_kontrol AS INTEGER) AS score_delta,
+    CASE
+        WHEN score_delta < 0 THEN '⬆️ Score increased'
+        WHEN score_delta > 0 THEN '⬇️ Score decreased'
+        WHEN score_delta = 0 THEN '↔️ Score unchanged'
+        ELSE '⏹️ No previous score'
+    END AS score_change,
     CASE
         WHEN postnr BETWEEN 0 AND 999 THEN 'Other'
         WHEN postnr BETWEEN 1000 AND 2999 THEN 'Copenhagen'

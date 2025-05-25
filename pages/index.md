@@ -221,7 +221,7 @@ Which businesses have got better since their last check and which have got worse
     emoji_score,
     previous_emoji_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
-    cast(seneste_kontrol AS INTEGER) - cast(naestseneste_kontrol AS INTEGER) AS score_delta
+    score_delta
   from
     smileys
   where
@@ -237,7 +237,7 @@ Which businesses have got better since their last check and which have got worse
     emoji_score,
     previous_emoji_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
-    cast(seneste_kontrol AS INTEGER) - cast(naestseneste_kontrol AS INTEGER) AS score_delta
+    score_delta
   from
     smileys
   where
@@ -327,7 +327,11 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   select distinct region from smileys
 ```
 
-<Grid cols=3>
+```sql score_change_dropdown
+  select distinct score_change from smileys
+```
+
+<Grid cols=4>
 <Dropdown
   name=emoji_score_selection
   data={emoji_score_dropdown}
@@ -354,6 +358,15 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   selectAllByDefault=true
   >
 </Dropdown>
+
+<Dropdown
+  name=score_change_selection
+  data={score_change_dropdown}
+  value=score_change
+  multiple=true
+  selectAllByDefault=true
+  >
+</Dropdown>
 </Grid>
 
 ```sql map_locations
@@ -367,11 +380,11 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
     by_city,
     region,
     URL,
-    seneste_kontrol_dato
+    seneste_kontrol_dato,
+    score_change
   from smileys
   where
     seneste_kontrol is not null
-    -- and postnr BETWEEN 1000 AND 3699
     and geo_longitude is not null
     and geo_longitude != 0
     and geo_latitude is not null
@@ -379,6 +392,7 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
     and emoji_score IN ${inputs.emoji_score_selection.value}
     and by_city IN ${inputs.city_selection.value}
     and region IN ${inputs.region_selection.value}
+    and score_change IN ${inputs.score_change_selection.value}
 ```
 
 <PointMap
@@ -395,8 +409,10 @@ tooltip={[
 {id: 'adresse1', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
 {id: 'postnr', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
 {id: 'by_city', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
+{id: 'region', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
 {id: 'seneste_kontrol_dato', title: 'Last inspection date', fmt: 'fulldate', showColumnName: true, valueClass: 'text-l font-semibold'},
 {id: 'emoji_score', title: 'Latest rating', fmt: 'id', showColumnName: true, valueClass: 'text-l font-semibold'},
+{id: 'score_change', fmt: 'id', title: 'Score change since last inspection', showColumnName: true, valueClass: 'text-l font-semibold'},
 {id: 'URL', showColumnName: false, contentType: 'link', linkLabel: 'Click to see Smiley Report 📋', valueClass: 'font-bold mt-1'}
 ]}
 height=800
