@@ -4,7 +4,12 @@ title: Danish Smiley Ratings
 
 <LastRefreshed/>
 
+
+<Accordion>
+
 **A standard for food and beverage safety for businesses in Denmark**
+
+<AccordionItem title="💡 Curious about what the data below is about? Open me to find out all about the Smiley system">
 
 # About the "Smiley" system
 
@@ -89,6 +94,10 @@ title: Danish Smiley Ratings
   </Group>
 </Grid>
 
+</AccordionItem>
+</Accordion>
+
+
 # Key stats on Smileys in Denmark
 
 ```sql smileys_with_rating
@@ -126,6 +135,11 @@ title: Danish Smiley Ratings
   where seneste_kontrol is not null
     and seneste_kontrol_dato >= CURRENT_DATE - INTERVAL 12 MONTH
   group by 1
+  order by 1 desc
+```
+
+```sql max_date
+select max(seneste_kontrol_dato) as latest_inspection_date from smileys
 ```
 
 ```sql count_by_virksomhedstype
@@ -149,7 +163,7 @@ title: Danish Smiley Ratings
     order by target asc
 ```
 
-### There are **<Value data={smileys_with_rating} column=n_businesses fmt="num0"/>** businesses in Denmark with Smiley ratings.
+### There are **<Value data={smileys_with_rating} column=n_businesses fmt="num0"/>** businesses in Denmark with Smiley ratings, with the last inspection happening on **<Value data={max_date} column=latest_inspection_date fmt="fulldate"/>**.
 
 <Grid cols=2>
     <BarChart
@@ -306,6 +320,15 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   select distinct emoji_score from smileys
 ```
 
+```sql by_city_dropdown
+  select distinct by_city from smileys
+```
+
+```sql region_dropdown
+  select distinct region from smileys
+```
+
+<Grid cols=3>
 <Dropdown
   name=emoji_score_selection
   data={emoji_score_dropdown}
@@ -313,12 +336,7 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   multiple=true
   selectAllByDefault=true
   >
-  <!-- <DropdownOption value="%" valueLabel="All Ratings"/> -->
 </Dropdown>
-
-```sql by_city_dropdown
-  select distinct by_city from smileys
-```
 
 <Dropdown
   name=city_selection
@@ -329,10 +347,6 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   >
 </Dropdown>
 
-```sql region_dropdown
-  select distinct region from smileys
-```
-
 <Dropdown
   name=region_selection
   data={region_dropdown}
@@ -341,6 +355,7 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
   selectAllByDefault=true
   >
 </Dropdown>
+</Grid>
 
 ```sql map_locations
   select
