@@ -4,10 +4,9 @@ title: Danish Smiley Ratings
 
 <LastRefreshed/>
 
-
-<Accordion>
-
 **A standard for food and beverage safety for businesses in Denmark**
+
+<Accordion class="text-black py-2 px-6 rounded-md bg-green-100">
 
 <AccordionItem title="💡 Curious about what the data below is about? Open me to find out all about the Smiley system">
 
