@@ -1,0 +1,5 @@
+colorlog
+bs4
+requests
+pandas
+duckdb
