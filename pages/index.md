@@ -196,7 +196,7 @@ select max(seneste_kontrol_dato) as latest_inspection_date from smileys
     date=seneste_kontrol_dato
     value=n_inspections
     title="Heatmap of inspections per day"
-    subtitle="How many inspections were carried out each day?"
+    subtitle="How many inspections were carried out each day in the last 12 months?"
     colorScale={['#098205', '#73a71c', '#c4cb2b', '#ebe234', '#ebbd34', '#eba034', '#eb8434', '#eb6934', '#eb4f34', '#eb4034']}
     />
     <SankeyDiagram
@@ -218,6 +218,7 @@ Which businesses have got better since their last check and which have got worse
 ```sql losers
   select
     navn1 AS name,
+    by_city AS city,
     emoji_score,
     previous_emoji_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
@@ -234,6 +235,7 @@ Which businesses have got better since their last check and which have got worse
 ```sql winners
   select
     navn1 AS name,
+    by_city AS city,
     emoji_score,
     previous_emoji_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
@@ -248,20 +250,22 @@ Which businesses have got better since their last check and which have got worse
 ```
 
 <Grid cols=2>
-<DataTable data={winners} title="👍 Top 10 winners since previous Smiley check" wrapTitles=true rowShading=true>
-	<Column id=name />
-	<Column id=emoji_score />
-	<Column id=previous_score />
-	<Column id=last_inpsection_date />
-  <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true/>
+<DataTable data={winners} title="📈 Top 10 winners since previous Smiley check" wrapTitles=true rowShading=true sortable=false>
+	<Column id=name wrap=true/>
+	<Column id=city wrap=true/>
+	<Column id=emoji_score wrap=true/>
+	<Column id=previous_score wrap=true/>
+	<Column id=last_inpsection_date fmt="longdate" wrap=true/>
+  <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true wrap=true/>
 </DataTable>
 
-<DataTable data={losers} title="👎 Top 10 losers since previous Smiley check" wrapTitles=true rowShading=true>
-	<Column id=name />
-	<Column id=emoji_score />
-	<Column id=previous_score />
-  <Column id=last_inpsection_date />
-  <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true/>
+<DataTable data={losers} title="📉 Top 10 losers since previous Smiley check" wrapTitles=true rowShading=true sortable=false>
+	<Column id=name wrap=true/>
+  <Column id=city wrap=true/>
+	<Column id=emoji_score wrap=true/>
+	<Column id=previous_score wrap=true/>
+  <Column id=last_inpsection_date fmt="longdate" wrap=true/>
+  <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true wrap=true/>
 </DataTable>
 </Grid>
 
@@ -301,17 +305,44 @@ How many results there were each week for each inspection score in the last 12 m
 
 Where each establishment is located, based on the latitude and longitude fields provided in the dataset. **Note: these are not verified and _can_ be imprecise or altogether incorrect.**
 
+```sql map_locations
+  select
+    navn1,
+    emoji_score,
+    previous_emoji_score,
+    score_delta,
+    geo_latitude,
+    geo_longitude,
+    adresse1,
+    postnr,
+    by_city,
+    region,
+    URL,
+    seneste_kontrol_dato,
+    score_change
+  from smileys
+  where
+    geo_longitude is not null
+    and geo_longitude != 0
+    and geo_latitude is not null
+    and geo_latitude != 0
+    and emoji_score IN ${inputs.emoji_score_selection.value}
+    and by_city IN ${inputs.city_selection.value}
+    and region IN ${inputs.region_selection.value}
+    and score_change IN ${inputs.score_change_selection.value}
+```
+
 ```sql count_with_coordinates
   select
-    count_if(geo_latitude is not null and geo_longitude is not null) AS n_with_coords,
+    count_if(geo_latitude is not null and geo_longitude is not null and geo_latitude != 0 and geo_longitude != 0) AS n_with_coords,
     count(*) as total_records,
     (count_if(geo_latitude is not null)/count(*)) as pct_with_coords
   from smileys
+  where emoji_score IN ${inputs.emoji_score_selection.value}
+    and by_city IN ${inputs.city_selection.value}
+    and region IN ${inputs.region_selection.value}
+    and score_change IN ${inputs.score_change_selection.value}
 ```
-
-<Alert status="info">
-There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt="num0"/> </strong> businesses with geolocation data available out of <strong> <Value data={count_with_coordinates} column=total_records fmt="num0"/> </strong> (<strong> <Value data={count_with_coordinates} column=pct_with_coords fmt="pct"/> </strong>). Only these are shown below.<Info description="Filling in the geolocation data for the remaining establishments requires geocoding using external services, which is possible, but very time consuming and not guaranteed to yield results each time." color="primary"/>
-</Alert>
 
 ## Filters
 
@@ -369,31 +400,9 @@ There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt
 </Dropdown>
 </Grid>
 
-```sql map_locations
-  select
-    navn1,
-    emoji_score,
-    geo_latitude,
-    geo_longitude,
-    adresse1,
-    postnr,
-    by_city,
-    region,
-    URL,
-    seneste_kontrol_dato,
-    score_change
-  from smileys
-  where
-    seneste_kontrol is not null
-    and geo_longitude is not null
-    and geo_longitude != 0
-    and geo_latitude is not null
-    and geo_latitude != 0
-    and emoji_score IN ${inputs.emoji_score_selection.value}
-    and by_city IN ${inputs.city_selection.value}
-    and region IN ${inputs.region_selection.value}
-    and score_change IN ${inputs.score_change_selection.value}
-```
+<Alert status="info">
+There are <strong> <Value data={count_with_coordinates} column=n_with_coords fmt="num0"/> </strong> businesses with geolocation data available out of <strong> <Value data={count_with_coordinates} column=total_records fmt="num0"/> </strong> with inspection results (<strong> <Value data={count_with_coordinates} column=pct_with_coords fmt="pct"/> </strong>). Only these are shown below.<Info description="Filling in the geolocation data for the remaining establishments requires geocoding using external services, which is possible, but very time consuming and not guaranteed to yield results each time." color="primary"/>
+</Alert>
 
 <PointMap
 data={map_locations}
@@ -417,3 +426,19 @@ tooltip={[
 ]}
 height=800
 />
+
+```sql all_smiley_data
+  select * from smileys
+```
+
+<DataTable data={all_smiley_data} title="Selected locations" subtitle="Note: this includes all businesess — even those without geolocation coordinates." wrapTitles=true rowShading=true search=true rows=25 sort="seneste_kontrol_dato desc">
+	<Column id=navn1 title="Establishment name" />
+	<Column id=adresse1 title="Address" />
+	<Column id=postnr title="Post Code" />
+	<Column id=by_city title="Town/City" />
+	<Column id=emoji_score />
+	<Column id=previous_emoji_score />
+	<Column id=seneste_kontrol_dato title="Last inspection date" fmt="fulldate" />
+  <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true/>
+  <Column id=URL contentType=link linkLabel="View Smiley report →"/>
+</DataTable>
