@@ -8,6 +8,12 @@ from loguru import logger
 
 
 def download_smiley_excel() -> str:
+    """Download the Smiley report as an XLSX file from
+    Fødevarestyrelsen's website.
+
+    Returns:
+        str: The name of the .xlsx file
+    """
     logger.debug("Checking website for Excel file link...")
     page_url = "https://www.findsmiley.dk/Statistik/Smiley_data/Sider/default.aspx"
     response = requests.get(page_url)
@@ -44,6 +50,12 @@ def download_smiley_excel() -> str:
 def excel_to_duckdb(
     excel_file: str, db_path: str = "sources/smiley_data/smiley_data.duckdb"
 ) -> None:
+    """Converts the Excel file to a DuckDB database file
+
+    Args:
+        excel_file: The path to the .xlsx file
+        db_path: The path to save the .duckdb file to. Defaults to "sources/smiley_data/smiley_data.duckdb".
+    """
     logger.debug("Converting Excel to Pandas dataframe...")
     df = pd.read_excel(excel_file)
     logger.debug("Creating DuckDB table from dataframe...")
