@@ -1,5 +1,6 @@
 ---
 title: Danish Smiley Ratings
+full_width: true
 ---
 
 <LastRefreshed/>
