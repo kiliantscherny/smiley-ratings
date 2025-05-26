@@ -99,8 +99,12 @@ title: Danish Smiley Ratings
 
 # Key stats on Smileys in Denmark
 
+```sql all_smiley_data
+  select * from smileys
+```
+
 ```sql smileys_with_rating
-  select count(*) as n_businesses from smileys
+  select count(*) as n_businesses from ${all_smiley_data}
 ```
 
 ```sql count_by_rating
@@ -109,7 +113,7 @@ title: Danish Smiley Ratings
     CAST(seneste_kontrol AS STRING) AS seneste_kontrol_string,
     smiley_score,
     count(*) AS n_establishments
-  from smileys
+  from ${all_smiley_data}
   where seneste_kontrol is not null
   group by 1, 2, 3
   order by 1 asc
@@ -120,7 +124,7 @@ title: Danish Smiley Ratings
     region,
     smiley_score,
     count(*) AS n_establishments
-  from smileys
+  from ${all_smiley_data}
   where seneste_kontrol is not null
   group by 1, 2
   order by 2 ASC, 3 DESC
@@ -130,7 +134,7 @@ title: Danish Smiley Ratings
   select
     seneste_kontrol_dato,
     count(*) AS n_inspections
-  from smileys
+  from ${all_smiley_data}
   where seneste_kontrol is not null
     and seneste_kontrol_dato >= CURRENT_DATE - INTERVAL 12 MONTH
   group by 1
@@ -138,16 +142,7 @@ title: Danish Smiley Ratings
 ```
 
 ```sql max_date
-select max(seneste_kontrol_dato) as latest_inspection_date from smileys
-```
-
-```sql count_by_virksomhedstype
-  select
-    virksomhedstype,
-    count(*) AS n_inspections
-  from smileys
-  where seneste_kontrol is not null
-  group by 1
+select max(seneste_kontrol_dato) as latest_inspection_date from ${all_smiley_data}
 ```
 
 ```sql sankey_source
@@ -155,7 +150,7 @@ select max(seneste_kontrol_dato) as latest_inspection_date from smileys
       virksomhedstype as source,
       smiley_score as target,
       count(*) as count
-    from smileys
+    from ${all_smiley_data}
     where smiley_score is not null
       and smiley_score != ''
     group by source, target;
@@ -325,7 +320,7 @@ Where each establishment is located, based on the latitude and longitude fields 
     URL,
     seneste_kontrol_dato,
     score_change
-  from smileys
+  from ${all_smiley_data}
   where
     geo_longitude is not null
     and geo_longitude != 0
@@ -342,7 +337,7 @@ Where each establishment is located, based on the latitude and longitude fields 
     count_if(geo_latitude is not null and geo_longitude is not null and geo_latitude != 0 and geo_longitude != 0) AS n_with_coords,
     count(*) as total_records,
     (count_if(geo_latitude is not null)/count(*)) as pct_with_coords
-  from smileys
+  from ${all_smiley_data}
   where smiley_score IN ${inputs.smiley_score_selection.value}
     and by_city IN ${inputs.city_selection.value}
     and region IN ${inputs.region_selection.value}
@@ -352,19 +347,19 @@ Where each establishment is located, based on the latitude and longitude fields 
 ## Filters
 
 ```sql smiley_score_dropdown
-  select distinct smiley_score from smileys
+  select distinct smiley_score from ${all_smiley_data}
 ```
 
 ```sql by_city_dropdown
-  select distinct by_city from smileys
+  select distinct by_city from ${all_smiley_data}
 ```
 
 ```sql region_dropdown
-  select distinct region from smileys
+  select distinct region from ${all_smiley_data}
 ```
 
 ```sql score_change_dropdown
-  select distinct score_change from smileys
+  select distinct score_change from ${all_smiley_data}
 ```
 
 <Grid cols=4>
@@ -431,10 +426,6 @@ tooltip={[
 ]}
 height=800
 />
-
-```sql all_smiley_data
-  select * from smileys
-```
 
 <DataTable data={all_smiley_data} title="Selected locations" subtitle="Note: this includes all businesess — even those without geolocation coordinates." wrapTitles=true rowShading=true search=true rows=25 sort="seneste_kontrol_dato desc">
 	<Column id=navn1 title="Establishment name" />
