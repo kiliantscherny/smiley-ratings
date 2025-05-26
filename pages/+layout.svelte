@@ -9,7 +9,7 @@
 <EvidenceDefaultLayout
   {data}
   logo="{base}/smileys-logo.png"
-  hideSidebar={true}
+  hideSidebar={false}
   hideBreadcrumbs={true}
   hideTOC={true}
   neverShowQueries={true}
