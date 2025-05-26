@@ -138,7 +138,6 @@ title: Danish Smiley Ratings
   where seneste_kontrol is not null
     and seneste_kontrol_dato >= CURRENT_DATE - INTERVAL 12 MONTH
   group by 1
-  order by 1 desc
 ```
 
 ```sql max_date
@@ -279,8 +278,6 @@ How many results there were each week for each inspection score in the last 12 m
       seneste_kontrol_dato >= CURRENT_DATE - INTERVAL 12 MONTH
   group by
     1, 2
-  order by
-    1 desc
 ```
 
 <LineChart 
@@ -427,7 +424,7 @@ tooltip={[
 height=800
 />
 
-<DataTable data={all_smiley_data} title="Selected locations" subtitle="Note: this includes all businesess — even those without geolocation coordinates." wrapTitles=true rowShading=true search=true rows=25 sort="seneste_kontrol_dato desc">
+<DataTable data={all_smiley_data} title="Selected locations" subtitle="Note: this includes all businesess — even those without geolocation coordinates." wrapTitles=true rowShading=true search=true rows=25 >
 	<Column id=navn1 title="Establishment name" />
 	<Column id=adresse1 title="Address" />
 	<Column id=postnr title="Post Code" />

@@ -60,3 +60,4 @@ select
 from
     smiley_ratings
 where seneste_kontrol > 0
+order by seneste_kontrol_dato desc
