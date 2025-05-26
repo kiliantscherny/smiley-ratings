@@ -107,7 +107,7 @@ title: Danish Smiley Ratings
   select
     seneste_kontrol,
     CAST(seneste_kontrol AS STRING) AS seneste_kontrol_string,
-    emoji_score,
+    smiley_score,
     count(*) AS n_establishments
   from smileys
   where seneste_kontrol is not null
@@ -118,7 +118,7 @@ title: Danish Smiley Ratings
 ```sql count_by_region
   select
     region,
-    emoji_score,
+    smiley_score,
     count(*) AS n_establishments
   from smileys
   where seneste_kontrol is not null
@@ -153,11 +153,11 @@ select max(seneste_kontrol_dato) as latest_inspection_date from smileys
 ```sql sankey_source
     select
       virksomhedstype as source,
-      emoji_score as target,
+      smiley_score as target,
       count(*) as count
     from smileys
-    where emoji_score is not null
-      and emoji_score != ''
+    where smiley_score is not null
+      and smiley_score != ''
     group by source, target;
     order by target asc
 ```
@@ -167,7 +167,7 @@ select max(seneste_kontrol_dato) as latest_inspection_date from smileys
 <Grid cols=2>
     <BarChart
       data={count_by_rating}
-      x=emoji_score
+      x=smiley_score
       y=n_establishments
       labels=true
       xAxisLabels=true
@@ -179,7 +179,7 @@ select max(seneste_kontrol_dato) as latest_inspection_date from smileys
     />
     <BarChart
       data={count_by_region}
-      series=emoji_score
+      series=smiley_score
       x=region
       y=n_establishments
       labels=true
@@ -219,8 +219,8 @@ Which businesses have got better since their last check and which have got worse
   select
     navn1 AS name,
     by_city AS city,
-    emoji_score,
-    previous_emoji_score AS previous_score,
+    smiley_score,
+    previous_smiley_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
     score_delta
   from
@@ -236,8 +236,8 @@ Which businesses have got better since their last check and which have got worse
   select
     navn1 AS name,
     by_city AS city,
-    emoji_score,
-    previous_emoji_score AS previous_score,
+    smiley_score,
+    previous_smiley_score AS previous_score,
     seneste_kontrol_dato AS last_inpsection_date,
     score_delta
   from
@@ -253,7 +253,7 @@ Which businesses have got better since their last check and which have got worse
 <DataTable data={winners} title="📈 Top 10 winners since previous Smiley check" wrapTitles=true rowShading=true sortable=false>
 	<Column id=name wrap=true/>
 	<Column id=city wrap=true/>
-	<Column id=emoji_score wrap=true/>
+	<Column id=smiley_score wrap=true/>
 	<Column id=previous_score wrap=true/>
 	<Column id=last_inpsection_date fmt="longdate" wrap=true/>
   <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true wrap=true/>
@@ -262,7 +262,7 @@ Which businesses have got better since their last check and which have got worse
 <DataTable data={losers} title="📉 Top 10 losers since previous Smiley check" wrapTitles=true rowShading=true sortable=false>
 	<Column id=name wrap=true/>
   <Column id=city wrap=true/>
-	<Column id=emoji_score wrap=true/>
+	<Column id=smiley_score wrap=true/>
 	<Column id=previous_score wrap=true/>
   <Column id=last_inpsection_date fmt="longdate" wrap=true/>
   <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true wrap=true/>
@@ -298,8 +298,13 @@ How many results there were each week for each inspection score in the last 12 m
     markers=true
     markerShape=emptyCircle
     markerSize=5
-    colorPalette={['#098205', '#ebe234', '#eb9334', '#eb4034']}
-/>
+    colorPalette={['#098205', '#ebe234', '#eb9334', '#eb4034']}>
+    <ReferenceArea xMin='2024-12-16' xMax='2025-01-06' label="🎅 Christmas time" color=#2e0d54/>
+    <ReferenceLine y=700 label="100 inspection results per day" hideValue labelPosition="aboveStart" color=#2341d9/>
+    <Callout x="2025-04-28" y=956 labelPosition=left labelWidth=fit>
+        Maximum weekly inspections to date
+    </Callout>
+</LineChart>
 
 # Locations of every establishment
 
@@ -308,8 +313,8 @@ Where each establishment is located, based on the latitude and longitude fields 
 ```sql map_locations
   select
     navn1,
-    emoji_score,
-    previous_emoji_score,
+    smiley_score,
+    previous_smiley_score,
     score_delta,
     geo_latitude,
     geo_longitude,
@@ -326,7 +331,7 @@ Where each establishment is located, based on the latitude and longitude fields 
     and geo_longitude != 0
     and geo_latitude is not null
     and geo_latitude != 0
-    and emoji_score IN ${inputs.emoji_score_selection.value}
+    and smiley_score IN ${inputs.smiley_score_selection.value}
     and by_city IN ${inputs.city_selection.value}
     and region IN ${inputs.region_selection.value}
     and score_change IN ${inputs.score_change_selection.value}
@@ -338,7 +343,7 @@ Where each establishment is located, based on the latitude and longitude fields 
     count(*) as total_records,
     (count_if(geo_latitude is not null)/count(*)) as pct_with_coords
   from smileys
-  where emoji_score IN ${inputs.emoji_score_selection.value}
+  where smiley_score IN ${inputs.smiley_score_selection.value}
     and by_city IN ${inputs.city_selection.value}
     and region IN ${inputs.region_selection.value}
     and score_change IN ${inputs.score_change_selection.value}
@@ -346,8 +351,8 @@ Where each establishment is located, based on the latitude and longitude fields 
 
 ## Filters
 
-```sql emoji_score_dropdown
-  select distinct emoji_score from smileys
+```sql smiley_score_dropdown
+  select distinct smiley_score from smileys
 ```
 
 ```sql by_city_dropdown
@@ -364,9 +369,9 @@ Where each establishment is located, based on the latitude and longitude fields 
 
 <Grid cols=4>
 <Dropdown
-  name=emoji_score_selection
-  data={emoji_score_dropdown}
-  value=emoji_score
+  name=smiley_score_selection
+  data={smiley_score_dropdown}
+  value=smiley_score
   multiple=true
   selectAllByDefault=true
   >
@@ -409,7 +414,7 @@ data={map_locations}
 lat=geo_latitude
 long=geo_longitude  
 pointName=navn1
-value=emoji_score
+value=smiley_score
 colorPalette={['#098205', '#ebe234', '#eb9334', '#eb4034']}
 showTooltip=true
 tooltipType=click
@@ -420,7 +425,7 @@ tooltip={[
 {id: 'by_city', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
 {id: 'region', fmt: 'id', showColumnName: false, valueClass: 'text-l font-semibold'},
 {id: 'seneste_kontrol_dato', title: 'Last inspection date', fmt: 'fulldate', showColumnName: true, valueClass: 'text-l font-semibold'},
-{id: 'emoji_score', title: 'Latest rating', fmt: 'id', showColumnName: true, valueClass: 'text-l font-semibold'},
+{id: 'smiley_score', title: 'Latest rating', fmt: 'id', showColumnName: true, valueClass: 'text-l font-semibold'},
 {id: 'score_change', fmt: 'id', title: 'Score change since last inspection', showColumnName: true, valueClass: 'text-l font-semibold'},
 {id: 'URL', showColumnName: false, contentType: 'link', linkLabel: 'Click to see Smiley Report 📋', valueClass: 'font-bold mt-1'}
 ]}
@@ -436,9 +441,9 @@ height=800
 	<Column id=adresse1 title="Address" />
 	<Column id=postnr title="Post Code" />
 	<Column id=by_city title="Town/City" />
-	<Column id=emoji_score />
-	<Column id=previous_emoji_score />
+	<Column id=smiley_score />
+	<Column id=previous_smiley_score />
 	<Column id=seneste_kontrol_dato title="Last inspection date" fmt="fulldate" />
   <Column id=score_delta contentType=delta fmt=num0 title="Change" downIsGood=true chip=true/>
-  <Column id=URL contentType=link linkLabel="View Smiley report →"/>
+  <Column id=URL contentType=link title="Report link" linkLabel="View Smiley report →"/>
 </DataTable>

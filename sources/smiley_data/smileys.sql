@@ -33,13 +33,13 @@ select
         WHEN seneste_kontrol = 2 THEN '2: 😐'
         WHEN seneste_kontrol = 3 THEN '3: ☹️'
         WHEN seneste_kontrol = 4 THEN '4: 😡'
-    END AS emoji_score,
+    END AS smiley_score,
     CASE
         WHEN naestseneste_kontrol = 1 THEN '1: 😊'
         WHEN naestseneste_kontrol = 2 THEN '2: 😐'
         WHEN naestseneste_kontrol = 3 THEN '3: ☹️'
         WHEN naestseneste_kontrol = 4 THEN '4: 😡'
-    END AS previous_emoji_score,
+    END AS previous_smiley_score,
     CAST(seneste_kontrol AS INTEGER) - CAST(naestseneste_kontrol AS INTEGER) AS score_delta,
     CASE
         WHEN score_delta < 0 THEN '⬆️ Score increased'
